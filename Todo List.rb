@@ -7,6 +7,8 @@ module Menu
      |Hey there, welcome. What you wanna do:(type your answer) |
      |Create - To create a list                                |
      |Add - To add a item to your list                         |
+     |Update - To update a existing task                       |
+     |Toggle status - To put if the task is done               |
      |Write - To write the list in a text file                 |
      |Read - To read through a existing file                   |
      |Delete - To delete a Item from your list                 |
@@ -37,6 +39,12 @@ until ['exit'].include?(asw = prompt(show).downcase)
       my_list = List.new
     when "add"
     	my_list.add(Task.new(prompt("What is the item you would like to add at the list?\n", ":>")))
+		when "update"
+			my_list.show_list
+			my_list.updater(prompt("Which task/item you want to update?(type the number)\n", ":>").to_i, prompt("What will be the new task/item?\n",":>"))
+		when "toggle status"
+			my_list.show_list
+			my_list.toggler(prompt("Which task you want to update the status?\n",":>").to_i)
 		when "write"
       my_list.writer(prompt("Which will be the filename?\n", ":>"))
 		when "read" 
