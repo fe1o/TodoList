@@ -10,16 +10,19 @@ class List
     all_tasks.map(&:description).join("\n")
   end
   def writer(filename)
-    savedtasks = all_tasks.map(&:description).join("\n")
+    savedtasks = all_tasks.map(&:stats).join("\n")
 		open(filename, 'a') do |file|
 			file.puts savedtasks
 		end
   end
    def read_from_file(filename)
-   	IO.readlines(filename).each do |line|
-    	add(Task.new(line.chomp))
+  		IO.readlines(filename).each{  
+		 		|line|
+      	status, *description = line.split(':')
+      	status = status.include?('X')
+      	add(Task.new(description.join(':').strip, status))
+		}
    	end
-   end
 	def delete(task_number)
 		all_tasks.delete_at(task_number)
 	end
@@ -31,13 +34,36 @@ class List
 				i = i + 1
 				}
 	end
+  def updater(task_number, task)
+    all_tasks[task_number] = Task.new(task)
+  end
+	def toggler(task_number)
+		all_tasks[task_number].toggle_status
+	end
 end
+
 class Task
   attr_reader :description
-  def initialize(description)
-    @description = description
+	attr_accessor :status
+	def initialize(description, status = false)
+  	@description = description
+    @status = status
   end
 	def to_s
 		description
+	end
+	def completed?
+		status
+	end
+	def stats
+		"#{represent_status}: #{description}"
+	end
+	def toggle_status
+		@complete_status = !completed?
+	end
+private
+
+	def represent_status
+		"#{completed? ? '[X]' : '[ ]'}"
 	end
 end
